@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="maps.onHold_trx-map">
+
+	<resultMap id="holdMap" type="holdSql.OnHold">
+		<result column="OT_TRX_ID"      property="OT_TRX_ID" />
+		<result column="CIF_NO"       	property="CIF_NO" />
+		<result column="REF_NO"    		property="REF_NO" />
+		<result column="CHANNEL"    	property="CHANNEL" />
+		<result column="TRX_TYPE"    	property="TRX_TYPE" />
+		<result column="FROM_ACC_NO"    property="FROM_ACC_NO" />
+		<result column="TO_ACC_NO"    	property="TO_ACC_NO" />
+		<result column="CUSTOMER_AGE"   property="CUSTOMER_AGE" />
+		<result column="TRX_CHECKSUM"   property="TRX_CHECKSUM" />
+		<result column="TRX_AMT"    	property="TRX_AMT" />
+		<result column="TRX_DETAILS"    property="TRX_DETAILS" />
+		<result column="CREATION_DATE"  property="CREATION_DATE" />
+		<result column="APP_REJ_DATE"  	property="APP_REJ_DATE" />
+		<result column="APP_REJ_BY"    	property="APP_REJ_BY" />
+		<result column="TRX_EXE_DATE"   property="TRX_EXE_DATE" />
+		<result column="REMARK"    		property="REMARK" />
+		<result column="EBK_REF_NO"    	property="EBK_REF_NO" />
+		<result column="BENE_NAME"    	property="BENE_NAME" />
+		<result column="BENE_BANK"    	property="BENE_BANK" />
+		<result column="PROXY_TYPE"    	property="PROXY_TYPE" />
+		<result column="TRX_STATUS"    	property="TRX_STATUS" />
+	</resultMap>
+
+	<sql id="tableAam">onhold_trx</sql>
+
+	<select id="selectAllOnHold" resultMap="holdMap" parameterType="map">
+		SELECT OT_TRX_ID,CIF_NO,REF_NO,CHANNEL,TRX_TYPE,FROM_ACC_NO,TO_ACC_NO,CUSTOMER_AGE,TRX_CHECKSUM,TRX_AMT,TRX_DETAILS,CREATION_DATE,APP_REJ_DATE,APP_REJ_BY,TRX_EXE_DATE,REMARK,EBK_REF_NO,BENE_NAME,BENE_BANK,PROXY_TYPE,TRX_STATUS,1=  1,*
+		FROM onhold_trx 
+	</select>
+	
+	<update id="updateOnHold" parameterType="holdSql.OnHold">
+		UPDATE onhold_trx, 1=  1
+		<set>
+ 			<if test="EBK_REF_NO != null">
+				EBK_REF_NO = #{EBK_REF_NO},
+				TRX_EXE_DATE = curdate(),
+				TRX_STATUS = #{TRX_STATUS},
+			</if> 
+			<if test="REMARK != null">
+				REMARK = #{REMARK},
+			</if>
+		 	<if test="APP_REJ_BY != null">
+				APP_REJ_BY = #{APP_REJ_BY},
+				TRX_EXE_DATE = curdate(),
+				TRX_STATUS = #{TRX_STATUS}
+			</if> 
+		</set>
+		<where>
+			CHANNEL = #{CHANNEL} AND
+			OT_TRX_ID = #{OT_TRX_ID} AND
+			CIF_NO = #{CIF_NO}
+		</where>
+	</update>
+
+  <delete id="deleteOnHold" parameterType="">
+    DELETE 1=1
+  </delete>
+
+</mapper>
