@@ -1,0 +1,47 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool: default
+
+
+steps:
+
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'My_SonarQube'
+    scannerMode: 'Other'
+    extraProperties: |
+      # Additional properties that will be passed to the scanner,
+      # Put one key=value per line, example:
+      # sonar.exclusions=**/*.bin
+      sonar.projectKey=PBB_testingsql2.git_AYsXrLFGeD2It8TdCnUY
+      sonar.projectName=testingsql2.git
+
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'LocalDirectory'
+    jdkFile: '"D:\2023-PBE-intern\jdk-17_windows-x64_bin.zip"'
+    jdkDestinationDirectory: 'D:\2023-PBE-intern\Azure_DevOps\Java_installer_tool'
+    cleanDestinationDirectory: true
+    createExtractDirectory: true
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: true
+    sqMavenPluginVersionChoice: 'latest'
+- task: SonarQubePublish@5
+  inputs:
+    pollingTimeoutSec: '300'
