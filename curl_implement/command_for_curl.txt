@@ -1,0 +1,2 @@
+//for nexus repository API call
+curl -v -u admin:Password1 -F "maven2.generate-pom=false" -F "maven2.asset1=$(Build.Repository.LocalPath)/pom.xml" -F "maven2.asset1.extension=pom" -F "maven2.asset2=$(Build.Repository.LocalPath)/target/holdSql-0.0.1-SNAPSHOT.jar;type=application/java-archive" -F "maven2.asset2.extension=jar" "http://localhost:8081/service/rest/v1/components?repository=Max_PBB_Maven"
