@@ -1,2 +1,33 @@
-//for nexus repository API call
-curl -v -u admin:Password1 -F "maven2.generate-pom=false" -F "maven2.asset1=$(Build.Repository.LocalPath)/pom.xml" -F "maven2.asset1.extension=pom" -F "maven2.asset2=$(Build.Repository.LocalPath)/target/holdSql-0.0.1-SNAPSHOT.jar;type=application/java-archive" -F "maven2.asset2.extension=jar" "http://localhost:8081/service/rest/v1/components?repository=Max_PBB_Maven"
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool: default
+
+
+steps:
+
+- task: CmdLine@2
+  inputs:
+    script: |
+      mvn install
+
+- task: PowerShell@2
+  displayName: do POST
+  inputs:
+    targetType: 'inline'
+    script: |
+      Remove-item alias:curl
+      curl -X 'POST' 'http://localhost:8081/service/rest/v1/components?repository=Max_PBB_Maven' -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -H 'NX-ANTI-CSRF-TOKEN: 0.8419471555485039' -H 'X-Nexus-UI: true' -u 'admin:Password1' -F maven2.groupId=holdSql-nexus -F maven2.artifactId=holdSql-nexus -F maven2.version=1.0.0 -F 'maven2.generate-pom=true' -F 'maven2.asset1=C:\Users\kwoks\.m2\repository\holdSql-nexus\holdSql-nexus\1.0.0\holdSql-nexus-1.0.0.jar;type=application/java-archive' -F 'maven2.asset1.extension=jar' 
+      
+- task: PowerShell@2
+  displayName: do GET
+  inputs:
+    targetType: 'inline'
+    script: |
+      Remove-item alias:curl
+      curl -X 'GET' 'http://localhost:8081/service/rest/v1/components?repository=Max_PBB_Maven' -H 'accept: application/json' -H 'NX-ANTI-CSRF-TOKEN: 0.8419471555485039' -H 'X-Nexus-UI: true' -u 'admin:Password1'
